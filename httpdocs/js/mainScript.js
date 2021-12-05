@@ -1,3 +1,4 @@
+import * as createBallScene from "./js/ball.js";
 const canvas = document.getElementById("canvas"); // Get the canvas element
 const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
@@ -14,7 +15,7 @@ var createScene = function () {
 	return scene;
 }
 
-const scene = createScene();
+const scene = createBallScene();
 // Register a render loop to repeatedly render the scene
 engine.runRenderLoop(function () {
 	scene.render();
