@@ -1,8 +1,13 @@
-export default function createBallScene(engine) {
+export default class ballScene {
+	constructor() {
+	}
+}
+
+export function createBallScene(engine) {
 	// delete engine;
 	engine = new BABYLON.Engine(canvas, true, {
-		deterministicLockstep: true,
-		lockstepMaxSteps: 4
+		deterministicLockstep: false,
+		lockstepMaxSteps: 1
 	});
 
 	// This creates a basic Babylon Scene object (non-mesh)
@@ -61,6 +66,5 @@ export default function createBallScene(engine) {
 	});
 
 	return scene;
-
 };
 
