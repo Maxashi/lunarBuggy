@@ -56,13 +56,27 @@ public partial class PlayerVehicleController : MonoBehaviour
         {
             axleInfo.Apply(_engineLoad, _steeringInput, _breakforce);
         }
+
+        CalculateVehiclePower();
+    }
+
+    private void CalculateVehiclePower()
+    {
+        float temp = 0f;
+
+        foreach (AxleInfo axleInfo in Axles)
+        {
+            temp += axleInfo.GetHorspower();
+        }
+
+        _vehiclePower = temp;
     }
 
     private void HandleAcceleration(float verticalAxis)
     {
         if (verticalAxis > deadZone)
         {
-            float targetAcceleration = verticalAxis * maxEnginePower;
+            float targetAcceleration = verticalAxis * maxEnginePower * 1000f; //multiply by 1000 because input is in kilowatts
             // Smoothly interpolate towards the target acceleration
             _engineLoad = Mathf.Lerp(_engineLoad, targetAcceleration, Time.deltaTime * engineResponsiveness);
         }
@@ -88,6 +102,11 @@ public partial class PlayerVehicleController : MonoBehaviour
 
     private void OnGUI()
     {
+        float vehiclePower = 0f;
+
+        foreach (var axle in Axles)
+            vehiclePower += axle.GetHorspower();
+
         // Display acceleration bar
         DrawBar("Engine Load", _engineLoad, 0, maxEnginePower, 20);
 
@@ -99,6 +118,8 @@ public partial class PlayerVehicleController : MonoBehaviour
 
         DrawBar("Acceleration Input", _accelerationInput, 0, 1, 80);
     }
+
+
 
     private void DrawBar(string label, float value, float minValue, float maxValue, float yPosition)
     {

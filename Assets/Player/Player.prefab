@@ -431,6 +431,10 @@ GameObject:
   - component: {fileID: 4065332734754440487}
   - component: {fileID: 2094271287}
   - component: {fileID: 2094271288}
+  - component: {fileID: 552750770336240358}
+  - component: {fileID: 1777521640289975538}
+  - component: {fileID: 8666864985399074443}
+  - component: {fileID: 707876484963582564}
   m_Layer: 0
   m_Name: chassis
   m_TagString: Untagged
@@ -547,6 +551,62 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -8069776164030716634, guid: e7914b8064f76e74eb9003dd5af54fb2, type: 3}
+--- !u!64 &552750770336240358
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2319532527916063503}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2226398892243495871, guid: e7914b8064f76e74eb9003dd5af54fb2, type: 3}
+--- !u!64 &1777521640289975538
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2319532527916063503}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1581000648259352350, guid: e7914b8064f76e74eb9003dd5af54fb2, type: 3}
+--- !u!64 &8666864985399074443
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2319532527916063503}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1723301812053979457, guid: e7914b8064f76e74eb9003dd5af54fb2, type: 3}
+--- !u!64 &707876484963582564
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2319532527916063503}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -8703764327020875308, guid: e7914b8064f76e74eb9003dd5af54fb2, type: 3}
 --- !u!1 &2410350582133840636
 GameObject:
   m_ObjectHideFlags: 0
@@ -711,7 +771,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6235694196955246191
 Transform:
   m_ObjectHideFlags: 0
@@ -790,11 +850,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 572d041153673914485a0fc6ac7a412c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  playerTransform: {fileID: 0}
+  playerVehiceController: {fileID: 0}
+  lastPlayerPosition: {x: 0, y: 0, z: 0}
   minDistance: 5
   maxDistance: 15
   zoomSpeed: 5
-  rotationSpeed: 5
+  rotationSpeedY: 5
+  rotationSpeedX: 5
+  minYRotation: -80
+  maxYRotation: 80
 --- !u!1 &4686397027685223886
 GameObject:
   m_ObjectHideFlags: 0
@@ -958,14 +1023,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Axles:
-  - leftWheel: {fileID: 3512074027600119586}
-    rightWheel: {fileID: 2659973668044747360}
+  - _leftWheel: {fileID: 3512074027600119586}
+    _rightWheel: {fileID: 2659973668044747360}
     leftWheelMeshTransform: {fileID: 4281218793471105561}
     rightWheelMeshTransform: {fileID: 3805602511377324684}
     motor: 0
     steering: 1
-  - leftWheel: {fileID: 6949064167329222705}
-    rightWheel: {fileID: 3128991917068414637}
+  - _leftWheel: {fileID: 6949064167329222705}
+    _rightWheel: {fileID: 3128991917068414637}
     leftWheelMeshTransform: {fileID: 6530144091539875062}
     rightWheelMeshTransform: {fileID: 8364973178278368095}
     motor: 1
