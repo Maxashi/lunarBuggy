@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class PlayerVehicleController : MonoBehaviour
+public partial class PlayerVehicleController : MonoBehaviour
 {
     [SerializeField] private List<AxleInfo> Axles;
 
@@ -16,27 +17,9 @@ public class PlayerVehicleController : MonoBehaviour
     [SerializeField] private float steeringRange;
     [SerializeField] private float breakingPower;
 
-    public float AccelerationInput
-    {
-        get
-        {
-            return _accelerationInput;
-        }
-    }
-    public float SteeringInput
-    {
-        get
-        {
-            return _steeringInput;
-        }
-    }
-    public float BreakForce
-    {
-        get
-        {
-            return _breakforce;
-        }
-    }
+    public float AccelerationInput => _accelerationInput;
+    public float SteeringInput => _steeringInput;
+    public float BreakForce => _breakforce;
 
 
     private float _accelerationInput = 0.0f;
@@ -44,6 +27,8 @@ public class PlayerVehicleController : MonoBehaviour
     private float _engineLoad = 0f;
     private float _steeringInput = 0f;
     private float _breakforce = 0f;
+
+    private float _vehiclePower;
 
     private const float deadZone = 0.001f;
 
