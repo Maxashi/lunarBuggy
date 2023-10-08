@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -8,27 +6,36 @@ public partial class PlayerVehicleController : MonoBehaviour
 {
     [SerializeField] private List<AxleInfo> Axles;
 
-    #region propulsion properties
-    [SerializeField, Range(0, 1000)] private float maxEnginePower = 150;
+    #region propulsion
+    [SerializeField, Range(0, 1000)] private float maxEngineTorque = 270;
     [SerializeField, Range(0, 100)] private float engineResponsiveness = 15f;
     [SerializeField, Range(0, 15)] private float flyWheelMass = 3f;
+    private float _accelerationInput = 0.0f;
+    private float _engineLoad = 0f;
+
     #endregion
 
-    [SerializeField] private float steeringRange;
-    [SerializeField] private float breakingPower;
+    [SerializeField] private float _steeringRange = 60;
 
-    public float AccelerationInput => _accelerationInput;
-    public float SteeringInput => _steeringInput;
-    public float BreakForce => _breakforce;
+    /// <summary>
+    /// Maximum break torque applicable
+    /// </summary>
+    [SerializeField] private float _breakingPower = 200;
+
+    /// <summary>
+    /// Controls how fast max break torque can be applied
+    /// </summary>
+    [SerializeField, Range(0, 100)] private float breakingResponsiveness = 15f;
+
+    /// <summary>
+    /// The current amount of torque applied to the brakes
+    /// </summary>
+    private float _breakTorque = 0f;
 
 
-    private float _accelerationInput = 0.0f;
-
-    private float _engineLoad = 0f;
     private float _steeringInput = 0f;
-    private float _breakforce = 0f;
 
-    private float _vehiclePower;
+    private float _vehiclePowerOutput;
 
     private const float deadZone = 0.001f;
 
@@ -48,13 +55,12 @@ public partial class PlayerVehicleController : MonoBehaviour
         HandleAcceleration(vertical);
         HandleBreaking(vertical);
 
-
-        _steeringInput = Input.GetAxis("Horizontal") * steeringRange;
+        _steeringInput = Input.GetAxis("Horizontal") * _steeringRange;
 
 
         foreach (AxleInfo axleInfo in Axles)
         {
-            axleInfo.Apply(_engineLoad, _steeringInput, _breakforce);
+            axleInfo.Apply(_engineLoad, _steeringInput, _breakTorque);
         }
 
         CalculateVehiclePower();
@@ -69,16 +75,16 @@ public partial class PlayerVehicleController : MonoBehaviour
             temp += axleInfo.GetHorspower();
         }
 
-        _vehiclePower = temp;
+        _vehiclePowerOutput = temp;
     }
 
     private void HandleAcceleration(float verticalAxis)
     {
         if (verticalAxis > deadZone)
         {
-            float targetAcceleration = verticalAxis * maxEnginePower * 1000f; //multiply by 1000 because input is in kilowatts
+            float targetTorque = verticalAxis * maxEngineTorque;
             // Smoothly interpolate towards the target acceleration
-            _engineLoad = Mathf.Lerp(_engineLoad, targetAcceleration, Time.deltaTime * engineResponsiveness);
+            _engineLoad = Mathf.Lerp(_engineLoad, targetTorque, Time.deltaTime * engineResponsiveness);
         }
         else
         {
@@ -91,11 +97,13 @@ public partial class PlayerVehicleController : MonoBehaviour
     {
         if (verticalAxis < -deadZone)
         {
-            _breakforce = verticalAxis;
+            float targetBrakeTorque = Mathf.Abs(verticalAxis * _breakingPower);
+
+            _breakTorque = Mathf.Lerp(_breakTorque, targetBrakeTorque, Time.deltaTime * breakingResponsiveness);
         }
         else
         {
-            _breakforce = 0f;
+            _breakTorque = 0f;
         }
     }
 
@@ -108,13 +116,13 @@ public partial class PlayerVehicleController : MonoBehaviour
             vehiclePower += axle.GetHorspower();
 
         // Display acceleration bar
-        DrawBar("Engine Load", _engineLoad, 0, maxEnginePower, 20);
+        DrawBar("Engine Load", _engineLoad, 0, maxEngineTorque, 20);
 
         // Display steering bar
-        DrawBar("SteeringInput", SteeringInput, -60, +60, 40);
+        DrawBar("SteeringInput", _steeringInput, -60, +60, 40);
 
         // Display breaking power bar
-        DrawBar("BreakForce", BreakForce, 0, 100, 60);
+        DrawBar("BreakForce", Mathf.Abs(_breakTorque), 0, 100, 60);
 
         DrawBar("Acceleration Input", _accelerationInput, 0, 1, 80);
     }
