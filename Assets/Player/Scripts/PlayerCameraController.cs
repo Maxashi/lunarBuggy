@@ -29,8 +29,8 @@ public class PlayerCameraController : MonoBehaviour
     [SerializeField, Range(-88f, 0f)] private float minYRotation = -80f;
     [SerializeField, Range(45f, 80f)] private float maxYRotation = 88f;
 
-    private float currentRotationX  ;
-    private float currentRotationY ; //Start behind the player
+    [SerializeField] private float currentRotationX = 45f;
+    [SerializeField] private float currentRotationY = 180f; //Start behind the player
     #endregion
 
     void Start()
@@ -54,8 +54,8 @@ public class PlayerCameraController : MonoBehaviour
     private Vector3 GetDesiredCamPosition()
     {
 
-        float mouseX = Input.GetAxis("Mouse X") * rotationSpeedX;
-        float mouseY = -Input.GetAxis("Mouse Y") * rotationSpeedY;
+        float mouseX = Input.GetAxis("Mouse X") * rotationSpeedY;
+        float mouseY = -Input.GetAxis("Mouse Y") * rotationSpeedX;
 
         // Incrementally update the rotation angles
         currentRotationY += mouseX;
