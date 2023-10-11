@@ -18,6 +18,8 @@ public class PlayerCameraController : MonoBehaviour
     [SerializeField, Range(0f, 10f)] private float rotationSpeedY = 1f;
     [SerializeField, Range(0f, 10f)] public float rotationSpeedX = 1f;
 
+    [SerializeField] bool InvertVeticalAxis;
+
     /// <summary>
     /// Direction from target to camera.
     /// </summary>
@@ -55,7 +57,16 @@ public class PlayerCameraController : MonoBehaviour
     {
 
         float mouseX = Input.GetAxis("Mouse X") * rotationSpeedY;
-        float mouseY = -Input.GetAxis("Mouse Y") * rotationSpeedX;
+        float mouseY;
+        
+        if (InvertVeticalAxis)
+        {
+            mouseY = -Input.GetAxis("Mouse Y") * rotationSpeedX;
+        }
+        else
+        {
+            mouseY = Input.GetAxis("Mouse Y") * rotationSpeedX;
+        }
 
         // Incrementally update the rotation angles
         currentRotationY += mouseX;
