@@ -29,8 +29,8 @@ public partial class PlayerVehicleController
             {
                 if (motor)
                 {
-                    _leftWheel.motorTorque = torque;
-                    _rightWheel.motorTorque = torque;
+                    _leftWheel.motorTorque = torque / 2;
+                    _rightWheel.motorTorque = torque / 2;
                 }
 
                 if (steering)
@@ -38,6 +38,7 @@ public partial class PlayerVehicleController
                     _leftWheel.steerAngle = steeringInput;
                     _rightWheel.steerAngle = steeringInput;
                 }
+
 
                 _leftWheel.brakeTorque = breakForce;
                 _rightWheel.brakeTorque = breakForce;

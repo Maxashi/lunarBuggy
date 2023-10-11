@@ -73,15 +73,15 @@ public class PlayerCameraController : MonoBehaviour
 
     private void CheckForPlayer()
     {
-        playerTransform = GameObject.FindWithTag("Player").transform;
+        playerVehiceController = playerTransform.GetComponent<PlayerVehicleController>();
+        playerTransform = playerVehiceController.transform;
 
-        if (playerTransform == null)
+        if (playerTransform == null || playerVehiceController == null)
         {
             Debug.LogError("Player reference not set in RacingCameraController!");
             return;
         }
 
-        playerVehiceController = playerTransform.GetComponent<PlayerVehicleController>();
     }
 
     private void OnDrawGizmos()
@@ -91,10 +91,5 @@ public class PlayerCameraController : MonoBehaviour
             var directionEndPoint = playerTransform.position + desiredCamDirection;
             Gizmos.DrawLine(playerTransform.position, directionEndPoint);
         }
-    }
-
-    void OnValidate()
-    {
-        CheckForPlayer();
     }
 }
