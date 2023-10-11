@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -6,26 +9,29 @@ public partial class PlayerVehicleController : MonoBehaviour
 {
     [SerializeField] private List<AxleInfo> Axles;
 
-    #region propulsion
-    [SerializeField, Range(0, 1000)] private float maxEngineTorque = 270;
-    [SerializeField, Range(0, 100)] private float engineResponsiveness = 15f;
-    [SerializeField, Range(0, 15)] private float flyWheelMass = 3f;
-    private float _accelerationInput = 0.0f;
-    private float _engineLoad = 0f;
+    #region VehicleCharacteristics
+    [SerializeField, Range(0, 1000)] private const float _maxEngineTorque = 270;
+    [SerializeField, Range(0, 100)] private const float engineResponsiveness = 15f;
+    [SerializeField, Range(0, 15)] private const float flyWheelMass = 3f;
 
-    #endregion
-
-    [SerializeField] private float _steeringRange = 60;
+    [SerializeField] private const float _steeringRange = 60;
 
     /// <summary>
     /// Maximum break torque applicable
     /// </summary>
-    [SerializeField] private float _breakingPower = 200;
+    [SerializeField] private const float _breakingPower = 200;
 
     /// <summary>
     /// Controls how fast max break torque can be applied
     /// </summary>
     [SerializeField, Range(0, 100)] private float breakingResponsiveness = 15f;
+
+    #endregion
+
+    #region propulsion status
+    private float _accelerationInput = 0.0f;
+    private float _engineLoad = 0f;
+
 
     /// <summary>
     /// The current amount of torque applied to the brakes
@@ -39,6 +45,13 @@ public partial class PlayerVehicleController : MonoBehaviour
 
     private const float deadZone = 0.001f;
 
+    #endregion
+
+    public float MaxEngineTorque { get => _maxEngineTorque; }
+    public float EngineResponsiveness { get => engineResponsiveness; }
+    public float AccelerationInput { get => _accelerationInput; set => _accelerationInput = value; }
+    public float EngineLoad { get => _engineLoad; set => _engineLoad = value; }
+
     void Start()
     {
         foreach (AxleInfo axleInfo in Axles)
@@ -50,10 +63,10 @@ public partial class PlayerVehicleController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var vertical = Input.GetAxis("Vertical");
+        _accelerationInput = Input.GetAxis("Vertical");
 
-        HandleAcceleration(vertical);
-        HandleBreaking(vertical);
+        HandleAcceleration(_accelerationInput);
+        HandleBreaking(_accelerationInput);
 
         _steeringInput = Input.GetAxis("Horizontal") * _steeringRange;
 
@@ -82,7 +95,7 @@ public partial class PlayerVehicleController : MonoBehaviour
     {
         if (verticalAxis > deadZone)
         {
-            float targetTorque = verticalAxis * maxEngineTorque;
+            float targetTorque = verticalAxis * _maxEngineTorque;
             // Smoothly interpolate towards the target acceleration
             _engineLoad = Mathf.Lerp(_engineLoad, targetTorque, Time.deltaTime * engineResponsiveness);
         }
@@ -106,20 +119,44 @@ public partial class PlayerVehicleController : MonoBehaviour
             _breakTorque = 0f;
         }
     }
-
-
-    private void OnGUI()
+    private float GetTorque()
     {
         float vehiclePower = 0f;
 
         foreach (var axle in Axles)
             vehiclePower += axle.GetTorque();
 
+        return vehiclePower;
+    }
+    private void SetGuiSkin()
+    {
+        GUISkin _gUIskin = new GUISkin();
+
+        // Create a custom label style with white color and centered alignment
+        GUIStyle labelStyle = new GUIStyle(GUI.skin.label);
+        labelStyle.normal.textColor = Color.white;
+        labelStyle.alignment = TextAnchor.MiddleCenter;
+
+        // Assign the custom style to the GUISkin
+        _gUIskin.label = labelStyle;
+
+        // Set the GUISkin
+        GUI.skin = _gUIskin;
+    }
+
+    private void OnGUI()
+    {
+        int i = 0;
+        float verticalOffset = 20;
+
         // Display acceleration bar
-        DrawBar("Engine Load", _engineLoad, 0, maxEngineTorque, 20);
+        DrawBar("Acceleration Iput", _accelerationInput, 0, MaxEngineTorque, verticalOffset * i++);
+
+        // Display acceleration bar
+        DrawBar("Engine Load", _engineLoad, 0, MaxEngineTorque, verticalOffset * i++);
 
         // Display steering bar
-        DrawBar("SteeringInput", _steeringInput, -60, +60, 40);
+        DrawBar("SteeringInput", _steeringInput, -60, +60, verticalOffset * i++);
 
         // Display breaking power bar
         DrawBar("BreakForce", Mathf.Abs(_breakTorque), 0, 100, 60);
@@ -128,26 +165,33 @@ public partial class PlayerVehicleController : MonoBehaviour
     }
 
 
+    [Space(20f)]
+    [SerializeField] float barWidth = 200f;
+    [SerializeField] float barHeight = 20f;
+    float labelWidth = 100f;
+    float marginLeft = 10f;
 
-    private void DrawBar(string label, float value, float minValue, float maxValue, float yPosition)
+    public void DrawBar(string label, float value, float minValue, float maxValue, float yPosition)
     {
-        float barWidth = 200f;
-        float barHeight = 20f;
-        float labelWidth = 100f;
+
+
+        float xPos = barWidth + 20f;
+
+        float zerostate = Application.isPlaying ? 0 : 0.05f;
 
         // Bar background
-        GUI.Box(new Rect(10, yPosition, barWidth, barHeight), "");
+        GUI.Box(new Rect(marginLeft, yPosition, barWidth, barHeight), label);
 
         // Calculate normalized value for the bar
-        float normalizedValue = Mathf.InverseLerp(minValue, maxValue, value);
+        float normalizedValue = Mathf.InverseLerp(minValue, maxValue, value) + zerostate;
 
         // Bar foreground based on normalized value
-        GUI.Box(new Rect(10, yPosition, barWidth * normalizedValue, barHeight), "");
+        GUI.Box(new Rect(marginLeft, yPosition, barWidth * normalizedValue, barHeight), "");
 
         // Text displaying the label next to the bar
-        GUI.Label(new Rect(220, yPosition, labelWidth, barHeight), label);
+        // GUI.Label(new Rect(xPos, yPosition, labelWidth, barHeight), label);
 
         // Text displaying the input value inside the bar
-        GUI.Label(new Rect(10, yPosition, barWidth, barHeight), value.ToString("F2"), new GUIStyle() { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold, normal = new GUIStyleState() { textColor = Color.white } });
+        GUI.Label(new Rect(marginLeft, yPosition, barWidth, barHeight), value.ToString("F2"), new GUIStyle() { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold, normal = new GUIStyleState() { textColor = Color.white } });
     }
 }
