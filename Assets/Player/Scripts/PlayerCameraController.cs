@@ -15,8 +15,8 @@ public class PlayerCameraController : MonoBehaviour
     [SerializeField] private float minDistance = 5f;
     [SerializeField] private float maxDistance = 15f;
     [SerializeField] private float zoomSpeed = 5f;
-    [SerializeField, Range(0f, 2f)] private float rotationSpeedY = 1f;
-    [SerializeField, Range(0f, 2f)] public float rotationSpeedX = 1f;
+    [SerializeField, Range(0f, 10f)] private float rotationSpeedY = 1f;
+    [SerializeField, Range(0f, 10f)] public float rotationSpeedX = 1f;
 
     /// <summary>
     /// Direction from target to camera.
