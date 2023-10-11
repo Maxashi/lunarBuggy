@@ -58,34 +58,15 @@ public partial class PlayerVehicleController
             }
         }
 
-        public float GetHorspower()
+        public float GetTorque()
         {
-            float powerHorsepower;
-
             if (_leftWheel != null && _rightWheel != null)
             {
                 // Get motor torque from WheelCollider
-                float motorTorqueLeft = _leftWheel.motorTorque;
-                float motorTorqueRight = _rightWheel.motorTorque;
-                // Get RPM from WheelCollider
-                float rpmLeft = _leftWheel.rpm;
-                float rpmRight = _rightWheel.rpm;
-                // Convert RPM to rad/s
-                float angularVelocityLeft = rpmLeft * 2 * Mathf.PI / 60;
-                float angularVelocityRight = rpmRight * 2 * Mathf.PI / 60;
-
-                // Calculate power in watts
-                float powerWattsLeft = (motorTorqueLeft * angularVelocityLeft) +
-                 (motorTorqueRight * angularVelocityRight);
-
-                // Convert power to horsepower
-                powerHorsepower = powerWattsLeft / 745.7f;
-
-                return powerHorsepower;
+                return  _leftWheel.motorTorque + _rightWheel.motorTorque;
             }
             return 0f;
         }
-
     }
 
 }

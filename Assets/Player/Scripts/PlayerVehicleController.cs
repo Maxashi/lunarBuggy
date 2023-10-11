@@ -35,7 +35,7 @@ public partial class PlayerVehicleController : MonoBehaviour
 
     private float _steeringInput = 0f;
 
-    private float _vehiclePowerOutput;
+    private float _vehicleTorque;
 
     private const float deadZone = 0.001f;
 
@@ -63,19 +63,19 @@ public partial class PlayerVehicleController : MonoBehaviour
             axleInfo.Apply(_engineLoad, _steeringInput, _breakTorque);
         }
 
-        CalculateVehiclePower();
+        CalculateVehicleTorque();
     }
 
-    private void CalculateVehiclePower()
+    private void CalculateVehicleTorque()
     {
         float temp = 0f;
 
         foreach (AxleInfo axleInfo in Axles)
         {
-            temp += axleInfo.GetHorspower();
+            temp += axleInfo.GetTorque();
         }
 
-        _vehiclePowerOutput = temp;
+        _vehicleTorque = temp;
     }
 
     private void HandleAcceleration(float verticalAxis)
@@ -113,7 +113,7 @@ public partial class PlayerVehicleController : MonoBehaviour
         float vehiclePower = 0f;
 
         foreach (var axle in Axles)
-            vehiclePower += axle.GetHorspower();
+            vehiclePower += axle.GetTorque();
 
         // Display acceleration bar
         DrawBar("Engine Load", _engineLoad, 0, maxEngineTorque, 20);
